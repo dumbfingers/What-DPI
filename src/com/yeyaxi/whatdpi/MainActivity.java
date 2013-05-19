@@ -132,8 +132,9 @@ public class MainActivity extends Activity {
 		xdpiText.setText(Float.toString(metrics.xdpi));
 		ydpiText.setText(Float.toString(metrics.ydpi));
 		
-		deviceText.setText("Your Device: \n" + 
-				android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL + 
+		deviceText.setText("Your Device:" +
+                android.os.Build.MANUFACTURER + " " +
+                android.os.Build.MODEL +
 				"\nCode name: " + android.os.Build.PRODUCT);
 	}
 
