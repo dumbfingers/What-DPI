@@ -1,17 +1,23 @@
 package com.yeyaxi.whatdpi;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Menu;
 import android.widget.TextView;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
 /**
  * What DPI is a simple tool for developers/designers to quickly find out the screen parameters.
  * @author Yaxi Ye
- *
+ * @since 13/Oct/2012
+ * @version 1.2
  */
-public class MainActivity extends Activity {
+public class MainActivity extends SherlockActivity {
 
 	TextView dpiText;
 	TextView resolutionText;
@@ -20,7 +26,7 @@ public class MainActivity extends Activity {
 	TextView xdpiText;
 	TextView ydpiText;
 	TextView deviceText;
-
+    private  ShareActionProvider actionProvider;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -136,11 +142,67 @@ public class MainActivity extends Activity {
                 android.os.Build.MANUFACTURER + " " +
                 android.os.Build.MODEL +
 				"\nCode name: " + android.os.Build.PRODUCT);
+
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-//		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu
+        getSupportMenuInflater().inflate(R.menu.activity_main, menu);
+
+        // Set menu items
+        MenuItem actionItem = menu.findItem(R.id.menu_share_provider);
+        actionProvider = (ShareActionProvider) actionItem.getActionProvider();
+        actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
+        actionProvider.setShareIntent(createDefaultShareIntent());
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_share_provider:
+//                actionProvider.setShareIntent(getShareIntent());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private Intent createDefaultShareIntent() {
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+//        shareIntent.putExtra(Intent.EXTRA_TITLE, "Device Screen Parameters");
+//        String stringToShare = (buildTextContent().equals(null)) ? "Initializing" : buildTextContent();
+        shareIntent.putExtra(Intent.EXTRA_TEXT, buildTextContent());
+//        shareIntent.putExtra(Intent.EXTRA_TEXT, stringToShare);
+
+
+        return shareIntent;
+    }
+
+//    private Intent getShareIntent() {
+//        Intent shareIntent = new Intent();
+//        shareIntent.setAction(Intent.ACTION_SEND);
+//        shareIntent.setType("text/plain");
+//        shareIntent.putExtra(Intent.EXTRA_TITLE, "Device Screen Parameters");
+//        shareIntent.putExtra(Intent.EXTRA_TEXT, buildTextContent());
+//
+//        return shareIntent;
+//    }
+    /**
+     * Build the Text for sharing
+     * @return the text describes the screen parameters
+     */
+    private String buildTextContent() {
+
+        return new String("Device Name: " + deviceText.getText() + "\n" +
+                            "Screen Density: " + dpiText.getText() + "\n" +
+                            "Screen Density Factor: " + factorText.getText() + "\n" +
+                            "Screen Resolution(px): " + resolutionText.getText() + "\n" +
+                            "Screen Resolution(dp): " + dpText.getText() + "\n" +
+                            "Screen DPI: " + xdpiText.getText() + " x " + ydpiText.getText());
+    }
 }
